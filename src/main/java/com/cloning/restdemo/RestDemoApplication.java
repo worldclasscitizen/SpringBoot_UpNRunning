@@ -4,6 +4,7 @@ package com.cloning.restdemo;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.repository.CrudRepository;
@@ -39,6 +40,26 @@ class DataLoader {
 				new Coffee("Cafe Lareno"),
 				new Coffee("Cafe Tres Pontas")
 		));
+	}
+}
+
+@RestController
+@RequestMapping("/greeting")
+class GreetingController {
+	@Value("${greeting-name: Mirage}")
+	private String name;
+
+	@Value("${greeting-coffee: ${greeting-name} is drinking Cafe Ganador}")
+	private String coffee;
+
+	@GetMapping
+	String getGreeting() {
+		return name;
+	}
+
+	@GetMapping("/coffee")
+	String getNameAndCoffee() {
+		return coffee;
 	}
 }
 
