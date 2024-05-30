@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @SpringBootApplication
+@ConfigurationPropertiesScan
 public class RestDemoApplication {
 
 	public static void main(String[] args) {
@@ -46,20 +49,20 @@ class DataLoader {
 @RestController
 @RequestMapping("/greeting")
 class GreetingController {
-	@Value("${greeting-name: Mirage}")
-	private String name;
+	private final Greeting greeting;
 
-	@Value("${greeting-coffee: ${greeting-name} is drinking Cafe Ganador}")
-	private String coffee;
+	public GreetingController(Greeting greeting) {
+		this.greeting = greeting;
+	}
 
 	@GetMapping
 	String getGreeting() {
-		return name;
+		return greeting.getName();
 	}
 
 	@GetMapping("/coffee")
 	String getNameAndCoffee() {
-		return coffee;
+		return greeting.getCoffee();
 	}
 }
 
@@ -96,6 +99,28 @@ class RestApiDemoController {
 	@DeleteMapping("/{id}")
 	void deleteCoffee(@PathVariable String id) {
 		coffeeRepository.deleteById(id);
+	}
+}
+
+@ConfigurationProperties(prefix = "greeting")
+class Greeting {
+	private String name;
+	private String coffee;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCoffee() {
+		return coffee;
+	}
+
+	public void setCoffee(String coffee) {
+		this.coffee = coffee;
 	}
 }
 
