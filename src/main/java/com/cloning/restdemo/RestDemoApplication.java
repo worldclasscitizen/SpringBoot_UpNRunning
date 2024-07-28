@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,11 @@ public class RestDemoApplication {
 		SpringApplication.run(RestDemoApplication.class, args);
 	}
 
+	@Bean
+	@ConfigurationProperties(prefix = "droid")
+	Droid createDroid() {
+		return new Droid();
+	}
 }
 
 @Component
@@ -99,6 +105,21 @@ class RestApiDemoController {
 	@DeleteMapping("/{id}")
 	void deleteCoffee(@PathVariable String id) {
 		coffeeRepository.deleteById(id);
+	}
+}
+
+@RestController
+@RequestMapping("/droid")
+class DroidController {
+	private final Droid droid;
+
+	public DroidController(Droid droid) {
+		this.droid = droid;
+	}
+
+	@GetMapping
+	Droid getDroid() {
+		return droid;
 	}
 }
 
